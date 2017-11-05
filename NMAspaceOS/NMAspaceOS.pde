@@ -1,5 +1,5 @@
 import controlP5.*;
-
+import java.awt.Robot;
 
 Timer timer;
 int n = 5;
@@ -96,16 +96,11 @@ void setup() {
     .setLineHeight(10)
     .setPosition(gPadding, height-consoleHeight-gPadding);
 
-  timer = new Timer(10000);//define a timer for 4 second long
+  timer = new Timer(4000);//define a timer for 4 second long
   timer.start();
   index = 0;
 }
 
-void keyPressed() {
-  if (key == 's') {
-    running = true;
-  }
-}
 
 void draw() {
   background(0);
@@ -150,7 +145,25 @@ void Run() {
   String noPathErrorMsg = ":    file path isn't set.";
   if (timer.isFinished()) {
     timer.start();
-    if (exes[index].TYPE!=null && exes[index].filepath != null) {
+
+    int previousIndex = index==0 ? n-1 : index-1;
+    Type previousType = exes[previousIndex].TYPE;
+
+    //quit the last executed program
+    if(exes[previousIndex] != null && exes[previousIndex].filepath != null && previousType != null){
+      try {
+        Robot r = new Robot();
+        r.keyPress(java.awt.event.KeyEvent.VK_META);
+        r.keyPress(java.awt.event.KeyEvent.VK_Q);
+        r.keyRelease(java.awt.event.KeyEvent.VK_META);
+        r.keyRelease(java.awt.event.KeyEvent.VK_Q);
+      }
+      catch(Throwable e) {
+      }
+    }
+
+    //execute the new program
+    if (exes[index].TYPE != null && exes[index].filepath != null) {
       switch(exes[index].TYPE) {
       case UNITY:
         //println(index + processingOnlyTypeErrorMsg);
@@ -168,14 +181,15 @@ void Run() {
         break;
       }
     } else {
-      if (exes[index].TYPE==null) {
+      if (exes[index].TYPE == null) {
         println(index + noTypeSetErrorMsg);
       }
-      if (exes[index].filepath==null) {
+      if (exes[index].filepath == null) {
         println(index + noPathErrorMsg);
       }
     }
 
+    //progress index
     if (index < n - 1) {
       index++;
     } else {
@@ -185,6 +199,7 @@ void Run() {
 }
 
 void toggleRun(boolean value) {
+  index = 0;
   if (value) {
     running = true;
     bgColor = runningBGColor;
