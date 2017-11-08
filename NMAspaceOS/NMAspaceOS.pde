@@ -96,7 +96,7 @@ void setup() {
     .setLineHeight(10)
     .setPosition(gPadding, height-consoleHeight-gPadding);
 
-  timer = new Timer(4000);//define a timer for 4 second long
+  timer = new Timer(8000);//define a timer for 4 second long
   timer.start();
   index = 0;
 }
@@ -111,7 +111,7 @@ void draw() {
   }
 }
 
-void DrawRunningIndicator(){
+void DrawRunningIndicator() {
   noStroke();
   fill(60, 255, 0);
   ellipse(width - gPadding, gPadding, 10, 10);
@@ -140,7 +140,6 @@ void execute(String path, boolean isProcessing) {
 }
 
 void Run() {
-  String processingOnlyTypeErrorMsg = ":    only work with processing yet.";
   String noTypeSetErrorMsg = ":    type hasn't been set.";
   String noPathErrorMsg = ":    file path isn't set.";
   if (timer.isFinished()) {
@@ -150,7 +149,7 @@ void Run() {
     Type previousType = exes[previousIndex].TYPE;
 
     //quit the last executed program
-    if(exes[previousIndex] != null && exes[previousIndex].filepath != null && previousType != null){
+    if (exes[previousIndex] != null && exes[previousIndex].filepath != null && previousType != null) {
       try {
         Robot r = new Robot();
         r.keyPress(java.awt.event.KeyEvent.VK_META);
@@ -159,6 +158,9 @@ void Run() {
         r.keyRelease(java.awt.event.KeyEvent.VK_Q);
       }
       catch(Throwable e) {
+        println(e);
+        // println("Quiting Program Failed. Terminating Program...");
+        exit();
       }
     }
 
@@ -230,6 +232,7 @@ class ButtonListener implements ControlListener {
         id = i;
       }
     }
+    //System.setProperty("apple.awt.fileDialogForDirectories", "true");
     java.awt.FileDialog dialog = new java.awt.FileDialog((java.awt.Frame)null, "Select the Executble file");
     dialog.setMode(java.awt.FileDialog.LOAD);
     dialog.setVisible(true);
