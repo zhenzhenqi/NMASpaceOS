@@ -1,5 +1,7 @@
 import controlP5.*;
 import java.awt.Robot;
+import javax.swing.JFileChooser;
+
 
 Timer timer;
 int n = 5;
@@ -26,6 +28,7 @@ Textarea console;
 String consoleContent = "";
 
 int index;
+int buttonTypedId = -1;
 
 boolean running;
 
@@ -35,6 +38,7 @@ int inputFieldH = 30;
 int inputFieldW = 400;
 int chooseFileBtnW = 100;
 int padding = 20;
+int runToggleHeight = 30;
 
 int consoleHeight = 100;
 
@@ -61,7 +65,7 @@ void setup() {
     Textarea tl = cp5.addTextarea("filePath"+i);
     tl.setHeight(inputFieldH);
     tl.setWidth(inputFieldW);
-    tl.enableColorBackground();
+    //tl.enableColorBackground();
     tl.setColorBackground(color(30));
     tl.setPosition(gPadding, (inputFieldH+padding) * i + gPadding);
     filePathTextAreas.add(tl);
@@ -87,7 +91,12 @@ void setup() {
   runToggle = cp5.addToggle("toggleRun")
     .setPosition(gPadding, (inputFieldH+padding) * n + gPadding)
     .setValue(false)
-    .setSize(30, 30);
+    .setSize(runToggleHeight, runToggleHeight);
+
+
+  //cp5.addTextlabel("Note").setText("NOTE\nFor Unity file, In order to be able to select the build fileE\n (.APP OR .EXE), You have to use the radio button to set the type first")
+  //  .setPosition(gPadding-2, (inputFieldH+padding) * n + + runToggleHeight + padding  + gPadding )
+  //  .setColor(color(#E07F21));
 
   cp5.addTextlabel("ConsoleLabel").setText("Console").setPosition(gPadding, height-consoleHeight-gPadding-20);
   console = cp5.addTextarea("console");
@@ -104,7 +113,6 @@ void setup() {
 
 void draw() {
   background(0);
-
   if (running) {
     Run();
     DrawRunningIndicator();
@@ -117,17 +125,11 @@ void DrawRunningIndicator() {
   ellipse(width - gPadding, gPadding, 10, 10);
 }
 
-void controlEvent(ControlEvent theEvent) {
-  if (theEvent.isGroup()) {
-    String name = theEvent.getName();
-    int groupID = Integer.parseInt(name.replaceAll("[\\D]", ""));
-    exes[groupID].TYPE =  Type.values()[ (int)theEvent.getGroup().getValue() ];
-  }
-}
+
 
 void execute(String path, boolean isProcessing) {
   if (isProcessing) {
-    String sketchFolderPath =  path.substring(0, path.lastIndexOf('/')+1);
+    String sketchFolderPath = path.substring(0, path.lastIndexOf('/')+1);
     try {
       Runtime.getRuntime().exec("/usr/local/bin/processing-java --sketch=" + sketchFolderPath + " --run");
     }
@@ -216,6 +218,7 @@ void log2console(String s) {
   console.setText(consoleContent);
 }
 
+//Select Type
 class TypeListener implements ControlListener {
   public void controlEvent(ControlEvent theEvent) {
     println(theEvent.getController());
@@ -223,27 +226,57 @@ class TypeListener implements ControlListener {
   }
 }
 
+//Set type when type is selected
+void controlEvent(ControlEvent theEvent) {
+  if (theEvent.isGroup()) {
+    String name = theEvent.getName();
+    int groupID = Integer.parseInt(name.replaceAll("[\\D]", ""));
+    exes[groupID].TYPE =  Type.values()[ (int)theEvent.getGroup().getValue() ];
+  }
+}
+
+
+//Select Button
 class ButtonListener implements ControlListener {
   public void controlEvent(ControlEvent theEvent) {
     Controller ctl = theEvent.getController();
-    int id = -1;
+
+    buttonTypedId = -1;
     for (int i = 0; i < chooseFileButtons.size(); i++) {
       if (ctl == chooseFileButtons.get(i)) {
-        id = i;
+        buttonTypedId = i;
       }
     }
-    //System.setProperty("apple.awt.fileDialogForDirectories", "true");
-    java.awt.FileDialog dialog = new java.awt.FileDialog((java.awt.Frame)null, "Select the Executble file");
-    dialog.setMode(java.awt.FileDialog.LOAD);
-    dialog.setVisible(true);
-    if (dialog.getFile()!=null && id != -1) {
-      String filepath = dialog.getDirectory() + dialog.getFile();
-      Textarea tf =  (Textarea)filePathTextAreas.get(id);
-      tf.setText(filepath);
-      exes[id].filepath = filepath;
-      println(filepath);
+
+    if (buttonTypedId != -1) {
+      if (exes[buttonTypedId].TYPE != null) {
+        if (exes[buttonTypedId].TYPE == Type.UNITY) {
+          selectFolder("Select Unity Build", "execfileSelected");
+          println("is unity");
+        } else {
+          selectInput("Select Processing .pde file or video file", "execfileSelected");
+        }
+      } else {
+        log2console("Please select TYPE first\n");
+      }
     } else {
-      log2console("No file selected\n");
+      log2console("opened failed, type is not set correctly. id:  " + buttonTypedId);
+    }
+  }
+}
+
+void execfileSelected(File selection) {
+  if (selection == null) {
+    log2console("No file selected\n");
+  } else {
+    if (buttonTypedId != -1) {
+      String filepath = selection.getAbsolutePath();
+      println(filepath);
+      Textarea tf =  (Textarea)filePathTextAreas.get(buttonTypedId);
+      tf.setText(filepath);
+      exes[buttonTypedId].filepath = filepath;
+    } else {
+      log2console("\nopened failed, type is not set correctly. id:  " + buttonTypedId);
     }
   }
 }
