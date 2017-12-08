@@ -4,7 +4,8 @@ import javax.swing.JFileChooser;
 
 
 Timer timer;
-int n = 5;
+int n = 3;
+int interval = 1; //default value is 1 second
 
 //cp5 elements
 ControlP5 cp5;
@@ -88,8 +89,14 @@ void setup() {
     fileTypeButtons.add(rb);
   }
 
-  runToggle = cp5.addToggle("toggleRun")
+  cp5.addSlider("interval")
     .setPosition(gPadding, (inputFieldH+padding) * n + gPadding)
+    .setRange(1, 10)
+    .setLabel("(second)")
+    .setSize(200,padding);
+  
+  runToggle = cp5.addToggle("toggleRun")
+    .setPosition(gPadding, (inputFieldH+padding) * (n+1) + gPadding)
     .setValue(false)
     .setSize(runToggleHeight, runToggleHeight);
 
@@ -105,13 +112,19 @@ void setup() {
     .setLineHeight(10)
     .setPosition(gPadding, height-consoleHeight-gPadding);
 
-  timer = new Timer(8000);//define a timer for 4 second long
+
+    
+
+
+  timer = new Timer(interval*1000);//define a timer for 1 to 10 seconds long
   timer.start();
   index = 0;
 }
 
 
 void draw() {
+  timer.updateTotalTime(interval*1000);
+  println(interval);
   background(0);
   if (running) {
     Run();
