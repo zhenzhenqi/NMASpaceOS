@@ -124,6 +124,7 @@ void setup() {
 
 
 void draw() {
+  //println(timer.totalTime);
   background(0);
   if (running) {
     Run();
@@ -166,6 +167,7 @@ void Run() {
     if (exes[previousIndex] != null && exes[previousIndex].filepath != null && previousType != null) {
       try {
         Robot r = new Robot();
+        println("COMMAND + Q");
         r.keyPress(java.awt.event.KeyEvent.VK_META);
         r.keyPress(java.awt.event.KeyEvent.VK_Q);
         r.keyRelease(java.awt.event.KeyEvent.VK_META);
