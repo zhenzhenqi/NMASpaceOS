@@ -17,6 +17,7 @@ ArrayList<Type> allTypes;
 ButtonListener choosePathListener;
 TypeListener chooseTypeListener;
 Toggle runToggle;
+Slider intervalSlider;
 color bgColor;
 color runningBGColor = color(19, 103, 0);
 color defaultBGColor = color(10);
@@ -89,12 +90,12 @@ void setup() {
     fileTypeButtons.add(rb);
   }
 
-  cp5.addSlider("interval")
+  intervalSlider = cp5.addSlider("interval")
     .setPosition(gPadding, (inputFieldH+padding) * n + gPadding)
-    .setRange(1, 10)
+    .setRange(3, 10)
     .setLabel("(second)")
-    .setSize(200,padding);
-  
+    .setSize(200, padding);
+
   runToggle = cp5.addToggle("toggleRun")
     .setPosition(gPadding, (inputFieldH+padding) * (n+1) + gPadding)
     .setValue(false)
@@ -113,7 +114,7 @@ void setup() {
     .setPosition(gPadding, height-consoleHeight-gPadding);
 
 
-    
+
 
 
   timer = new Timer(interval*1000);//define a timer for 1 to 10 seconds long
@@ -123,8 +124,6 @@ void setup() {
 
 
 void draw() {
-  timer.updateTotalTime(interval*1000);
-  println(interval);
   background(0);
   if (running) {
     Run();
@@ -245,6 +244,10 @@ void controlEvent(ControlEvent theEvent) {
     String name = theEvent.getName();
     int groupID = Integer.parseInt(name.replaceAll("[\\D]", ""));
     exes[groupID].TYPE =  Type.values()[ (int)theEvent.getGroup().getValue() ];
+  }
+
+  if (theEvent.getController() == intervalSlider) {
+    timer.updateTotalTime(interval * 1000);
   }
 }
 
