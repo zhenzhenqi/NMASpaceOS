@@ -8,20 +8,25 @@ class Timer {
   }
 
   // Starting the timer
-  void start() {
+  void kickoff() {
     // When the timer starts it stores the current time in milliseconds.
     savedTime = millis();
   }
-  
-  void updateTotalTime(int tempTotalTime){
+
+  void updateTotalTime(int tempTotalTime) {
     totalTime = tempTotalTime;
   }
 
   // The function isFinished() returns true if 5,000 ms have passed. 
   // The work of the timer is farmed out to this method.
   boolean isFinished() { 
+
     // Check how much time has passed
     int passedTime = millis()- savedTime;
+
+    println("current time: " + millis() + ",  " + "savedTime" + savedTime + "  passedTime:  " + passedTime);
+
+
     if (passedTime > totalTime) {
       return true;
     } else {

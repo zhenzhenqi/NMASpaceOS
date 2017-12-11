@@ -114,11 +114,8 @@ void setup() {
     .setPosition(gPadding, height-consoleHeight-gPadding);
 
 
-
-
-
   timer = new Timer(interval*1000);//define a timer for 1 to 10 seconds long
-  timer.start();
+  timer.kickoff();
   index = 0;
 }
 
@@ -157,9 +154,11 @@ void execute(String path, boolean isProcessing) {
 void Run() {
   String noTypeSetErrorMsg = ":    type hasn't been set.";
   String noPathErrorMsg = ":    file path isn't set.";
-  if (timer.isFinished()) {
-    timer.start();
 
+  if (timer.isFinished()) {
+
+    timer.kickoff();
+    
     int previousIndex = index==0 ? n-1 : index-1;
     Type previousType = exes[previousIndex].TYPE;
 
