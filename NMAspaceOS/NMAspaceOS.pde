@@ -24,6 +24,7 @@ Button saveSettings;
 ButtonListener choosePathListener;
 TypeListener chooseTypeListener;
 Toggle runToggle;
+boolean justStarted;
 Slider intervalSlider;
 color bgColor;
 color runningBGColor = color(19, 103, 0);
@@ -99,7 +100,7 @@ void setup() {
 
   intervalSlider = cp5.addSlider("interval")
     .setPosition(gPadding, (inputFieldH+padding) * n + gPadding)
-    .setRange(3, 10)
+    .setRange(3, 30)
     .setLabel("(second)")
     .setSize(200, padding);
 
@@ -129,7 +130,6 @@ void setup() {
 
 
   timer = new Timer(interval*1000);//define a timer for 1 to 10 seconds long
-  timer.kickoff();
   index = 0;
 }
 
@@ -166,18 +166,17 @@ void execute(String path, boolean isProcessing) {
 }
 
 void Run() {
+
   String noTypeSetErrorMsg = ":    type hasn't been set.";
   String noPathErrorMsg = ":    file path isn't set.";
 
   if (timer.isFinished()) {
-
-    timer.kickoff();
-
     int previousIndex = index==0 ? n-1 : index-1;
     Type previousType = exes[previousIndex].TYPE;
 
     //quit the last executed program
-    if (exes[previousIndex] != null && exes[previousIndex].filepath != null && previousType != null) {
+    if (exes[previousIndex] != null && exes[previousIndex].filepath != null && previousType != null && !justStarted) {
+
       try {
         Robot r = new Robot();
         println("COMMAND + Q");
@@ -192,6 +191,8 @@ void Run() {
         exit();
       }
     }
+
+    justStarted = false;
 
     //execute the new program
     if (exes[index].TYPE != null && exes[index].filepath != null) {
@@ -224,14 +225,18 @@ void Run() {
     } else {
       index = 0;
     }
+
+    timer.updateSavedTime();
   }
 }
 
 void toggleRun(boolean value) {
   index = 0;
   if (value) {
+    timer.savedTime = millis();
     running = true;
     bgColor = runningBGColor;
+    justStarted = true;
   } else {
     running = false;
     bgColor = defaultBGColor;
@@ -260,8 +265,9 @@ void controlEvent(ControlEvent theEvent) {
     exes[groupID].TYPE =  Type.values()[ (int)theEvent.getGroup().getValue() ];
   }
 
-  if (theEvent.getController() == intervalSlider) {
+  if (theEvent.getController().getName() == intervalSlider.getName()) {
     timer.updateTotalTime(interval * 1000);
+    println("Update total time to: " + interval);
   }
 }
 
