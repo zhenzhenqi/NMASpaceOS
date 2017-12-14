@@ -3,6 +3,9 @@ import java.awt.Robot;
 import javax.swing.JFileChooser;
 
 
+String dataFileName = "userpref.json";
+JSONObject userpref;
+
 Timer timer;
 int n = 3;
 int interval = 1; //default value is 1 second
@@ -12,7 +15,11 @@ ControlP5 cp5;
 ArrayList<Textarea> filePathTextAreas;
 ArrayList<Button> chooseFileButtons;
 ArrayList<RadioButton> fileTypeButtons;
-ArrayList<Type> allTypes;
+//ArrayList<Type> allTypes;
+
+Button loadSettings;
+Button saveSettings;
+
 
 ButtonListener choosePathListener;
 TypeListener chooseTypeListener;
@@ -41,15 +48,15 @@ int inputFieldW = 400;
 int chooseFileBtnW = 100;
 int padding = 20;
 int runToggleHeight = 30;
-
-int consoleHeight = 100;
+int settingButtonWidth = 150;
+int consoleHeight = 200;
 
 public enum Type {
   UNITY, PROCESSING, VIDEO
 }
 
 void setup() {
-  size(900, 600);
+  size(900, 800);
   pixelDensity(2);
   cp5 = new ControlP5(this);
 
@@ -101,6 +108,12 @@ void setup() {
     .setValue(false)
     .setSize(runToggleHeight, runToggleHeight);
 
+  loadSettings = cp5.addButton("loadSettings")
+    .setPosition(gPadding + padding + runToggleHeight, (inputFieldH + padding) * (n+1) + gPadding)
+    .setSize(settingButtonWidth, runToggleHeight);
+  saveSettings = cp5.addButton("saveSettings")
+    .setPosition(gPadding + padding + runToggleHeight + padding + settingButtonWidth, (inputFieldH + padding) * (n+1) + gPadding)
+    .setSize(settingButtonWidth, runToggleHeight);
 
   //cp5.addTextlabel("Note").setText("NOTE\nFor Unity file, In order to be able to select the build fileE\n (.APP OR .EXE), You have to use the radio button to set the type first")
   //  .setPosition(gPadding-2, (inputFieldH+padding) * n + + runToggleHeight + padding  + gPadding )
@@ -111,6 +124,7 @@ void setup() {
   console.setSize(width-gPadding*2, consoleHeight)
     .setColorBackground(30)
     .setLineHeight(10)
+    //.setFont(createFont("arial", 8))
     .setPosition(gPadding, height-consoleHeight-gPadding);
 
 
@@ -158,7 +172,7 @@ void Run() {
   if (timer.isFinished()) {
 
     timer.kickoff();
-    
+
     int previousIndex = index==0 ? n-1 : index-1;
     Type previousType = exes[previousIndex].TYPE;
 
@@ -183,14 +197,12 @@ void Run() {
     if (exes[index].TYPE != null && exes[index].filepath != null) {
       switch(exes[index].TYPE) {
       case UNITY:
-        //println(index + processingOnlyTypeErrorMsg);
         execute(exes[index].filepath, false);
         break;
       case PROCESSING:
         execute(exes[index].filepath, true);
         break;
-      case VIDEO:
-        //println(index + processingOnlyTypeErrorMsg);        
+      case VIDEO:    
         execute(exes[index].filepath, false);
         break;
       default:
@@ -243,6 +255,7 @@ class TypeListener implements ControlListener {
 void controlEvent(ControlEvent theEvent) {
   if (theEvent.isGroup()) {
     String name = theEvent.getName();
+    println(name);
     int groupID = Integer.parseInt(name.replaceAll("[\\D]", ""));
     exes[groupID].TYPE =  Type.values()[ (int)theEvent.getGroup().getValue() ];
   }
@@ -251,6 +264,8 @@ void controlEvent(ControlEvent theEvent) {
     timer.updateTotalTime(interval * 1000);
   }
 }
+
+
 
 
 //Select Button
@@ -265,19 +280,21 @@ class ButtonListener implements ControlListener {
       }
     }
 
+    //check if type is selected
     if (buttonTypedId != -1) {
       if (exes[buttonTypedId].TYPE != null) {
+        //if is unity then select folder, if else, select file
         if (exes[buttonTypedId].TYPE == Type.UNITY) {
-          selectFolder("Select Unity Build", "execfileSelected");
-          println("is unity");
+          selectFolder("", "execfileSelected");
         } else {
-          selectInput("Select Processing .pde file or video file", "execfileSelected");
+          selectInput("", "execfileSelected");
         }
       } else {
+        //exes[buttonTypedId].TYPE == null
         log2console("Please select TYPE first\n");
       }
     } else {
-      log2console("opened failed, type is not set correctly. id:  " + buttonTypedId);
+      log2console("Type didn't get set.  " + buttonTypedId);
     }
   }
 }
