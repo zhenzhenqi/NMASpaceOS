@@ -14,6 +14,9 @@ ArrayList<Button> chooseFileButtons;
 ArrayList<RadioButton> fileTypeButtons;
 ArrayList<Type> allTypes;
 
+Button saveSettings;
+Button loadSettings;
+
 ButtonListener choosePathListener;
 TypeListener chooseTypeListener;
 Toggle runToggle;
@@ -42,12 +45,15 @@ int inputFieldW = 400;
 int chooseFileBtnW = 100;
 int padding = 20;
 int runToggleHeight = 30;
-
+int userprefButtonWidth = 150; 
 int consoleHeight = 100;
 
 public enum Type {
   UNITY, PROCESSING, VIDEO
 }
+
+JSONObject userpref;
+String dataFileName = "userpref.json";
 
 void setup() {
   size(900, 600);
@@ -102,10 +108,13 @@ void setup() {
     .setValue(false)
     .setSize(runToggleHeight, runToggleHeight);
 
+  saveSettings = cp5.addButton("saveSettings")
+    .setPosition(gPadding + runToggleHeight + padding, (inputFieldH+padding) * (n+1) + gPadding)
+    .setSize(userprefButtonWidth, runToggleHeight);
 
-  //cp5.addTextlabel("Note").setText("NOTE\nFor Unity file, In order to be able to select the build fileE\n (.APP OR .EXE), You have to use the radio button to set the type first")
-  //  .setPosition(gPadding-2, (inputFieldH+padding) * n + + runToggleHeight + padding  + gPadding )
-  //  .setColor(color(#E07F21));
+  loadSettings = cp5.addButton("loadSettings")
+    .setPosition(gPadding + runToggleHeight + userprefButtonWidth + padding*2, (inputFieldH+padding) * (n+1) + gPadding)
+    .setSize(userprefButtonWidth, runToggleHeight);
 
   cp5.addTextlabel("ConsoleLabel").setText("Console").setPosition(gPadding, height-consoleHeight-gPadding-20);
   console = cp5.addTextarea("console");
@@ -134,8 +143,6 @@ void DrawRunningIndicator() {
   fill(60, 255, 0);
   ellipse(width - gPadding, gPadding, 10, 10);
 }
-
-
 
 void execute(String path, boolean isProcessing) {
   if (isProcessing) {
@@ -253,9 +260,11 @@ void controlEvent(ControlEvent theEvent) {
     exes[groupID].TYPE =  Type.values()[ (int)theEvent.getGroup().getValue() ];
   }
 
-  if (theEvent.getController().getName() == intervalSlider.getName()) {
-    timer.updateTotalTime(interval * 1000);
-    println("Update total time to: " + interval);
+  if (intervalSlider != null) {
+    if (theEvent.getController().getName() == intervalSlider.getName()) {
+      timer.updateTotalTime(interval * 1000);
+      println("Update total time to: " + interval);
+    }
   }
 }
 
