@@ -2,7 +2,6 @@ import controlP5.*;
 import java.awt.Robot;
 import javax.swing.JFileChooser;
 
-
 Timer timer;
 int n = 3;
 int interval = 1; //default value is 1 second
@@ -169,8 +168,10 @@ void Run() {
     Type previousType = exes[previousIndex].TYPE;
 
     //quit the last executed program
-    if (exes[previousIndex] != null && exes[previousIndex].filepath != null && previousType != null && !justStarted) {
-
+    if (exes[previousIndex] != null
+      && exes[previousIndex].filepath != null
+      && previousType != null
+      && !justStarted) {
       try {
         Robot r = new Robot();
         println("COMMAND + Q");
@@ -185,8 +186,9 @@ void Run() {
         exit();
       }
     }
-
     justStarted = false;
+    
+    delay(1000);
 
     //execute the new program
     if (exes[index].TYPE != null && exes[index].filepath != null) {
