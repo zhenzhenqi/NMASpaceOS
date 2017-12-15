@@ -187,8 +187,8 @@ void Run() {
       }
     }
     justStarted = false;
-    
-    delay(1000);
+
+    delay(1500);
 
     //execute the new program
     if (exes[index].TYPE != null && exes[index].filepath != null) {
@@ -216,6 +216,8 @@ void Run() {
         println(index + noPathErrorMsg);
       }
     }
+
+    delay(1000);
 
     //progress index
     if (index < n - 1) {
