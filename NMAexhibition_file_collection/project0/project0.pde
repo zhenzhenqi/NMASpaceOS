@@ -11,19 +11,21 @@ float y3;
 //set up a new drawing environment
 void setup(){
   //intialize values for two variable
-  x1 = 300;
-  y1 = 300;
+  x1 = width/2+random(-100, 100);
+  y1 = height/2+random(-100, 100);
   
-  x2 = 250;
-  y2 = 320;
+  x2 = width/2+random(-100, 100);
+  y2 = height/2+random(-100, 100);
   
-  x3 = 310;
-  y3 = 280;
+  x3 = width/2+random(-100, 100);
+  y3 = height/2+random(-100, 100);
+  
   //set a background color with certain amount of red, green and blue
   //range 0 - 255
   background(0, 0, 0);
   //set a canvas that's 600 by 600 pixel big
-  size(600, 600);
+  //size(600, 600);
+  fullScreen();
 }
 
 //things we draw that need to move around
