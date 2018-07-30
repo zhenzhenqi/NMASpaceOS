@@ -264,11 +264,18 @@ void controlEvent(ControlEvent theEvent) {
     exes[groupID].TYPE =  Type.values()[ (int)theEvent.getGroup().getValue() ];
   }
 
-  if (intervalSlider != null) {
-    if (theEvent.getController().getName() == intervalSlider.getName()) {
-      timer.updateTotalTime(interval * 1000);
-      println("Update total time to: " + interval);
-    }
+  //if (intervalSlider != null) {
+  //  if (theEvent.getController().getName() == intervalSlider.getName()) {
+  //    timer.updateTotalTime(interval * 1000);
+  //    println("Update total time to: " + interval);
+  //  }
+  //}
+}
+
+void interval (int input) {
+  if (timer!=null) {
+    timer.updateTotalTime(input * 1000);
+    println("interval is set to: " + input  + " sec");
   }
 }
 
