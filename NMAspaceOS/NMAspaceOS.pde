@@ -106,7 +106,7 @@ void setup() {
   intervalSlider = cp5.addSlider("interval")
     .setPosition(gPadding, (inputFieldH+padding) * n + gPadding)
     .setValue(interval)
-    .setRange(3, 30)
+    .setRange(3, 180)
     .setLabel("(second)")
     .setSize(200, padding);
 
