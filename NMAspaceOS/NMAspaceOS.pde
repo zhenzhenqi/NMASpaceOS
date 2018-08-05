@@ -2,9 +2,16 @@ import controlP5.*;
 import java.awt.Robot;
 import javax.swing.JFileChooser;
 
+//SETTINGS
+////////////////////////
+int n = 3;//number of items
+int interval = 15; //default value is 1 second
+boolean AUTO_RUN = true;
+////////////////////////
+
+
+
 Timer timer;
-int n = 3;
-int interval = 1; //default value is 1 second
 
 //cp5 elements
 ControlP5 cp5;
@@ -14,7 +21,7 @@ ArrayList<RadioButton> fileTypeButtons;
 ArrayList<Type> allTypes;
 
 Button saveSettings;
-Button loadSettings;
+
 
 ButtonListener choosePathListener;
 TypeListener chooseTypeListener;
@@ -40,7 +47,7 @@ boolean running;
 //layout
 int gPadding = 20;
 int inputFieldH = 30;
-int inputFieldW = 400;
+int inputFieldW = 400;  
 int chooseFileBtnW = 100;
 int padding = 20;
 int runToggleHeight = 30;
@@ -98,20 +105,21 @@ void setup() {
 
   intervalSlider = cp5.addSlider("interval")
     .setPosition(gPadding, (inputFieldH+padding) * n + gPadding)
+    .setValue(interval)
     .setRange(3, 30)
     .setLabel("(second)")
     .setSize(200, padding);
 
   runToggle = cp5.addToggle("toggleRun")
     .setPosition(gPadding, (inputFieldH+padding) * (n+1) + gPadding)
-    .setValue(false)
+    .setValue(AUTO_RUN)
     .setSize(runToggleHeight, runToggleHeight);
 
   saveSettings = cp5.addButton("saveSettings")
     .setPosition(gPadding + runToggleHeight + padding, (inputFieldH+padding) * (n+1) + gPadding)
     .setSize(userprefButtonWidth, runToggleHeight);
 
-  loadSettings = cp5.addButton("loadSettings")
+  cp5.addButton("loadSettings")
     .setPosition(gPadding + runToggleHeight + userprefButtonWidth + padding*2, (inputFieldH+padding) * (n+1) + gPadding)
     .setSize(userprefButtonWidth, runToggleHeight);
 
@@ -125,6 +133,11 @@ void setup() {
 
   timer = new Timer(interval*1000);//define a timer for 1 to 10 seconds long
   index = 0;
+
+  if (AUTO_RUN) {
+    loadSettings();
+    toggleRun(true);
+  }
 }
 
 
