@@ -1,0 +1,17 @@
+{
+  "executables": [
+    {
+      "path": "/Users/yangwang/code/processing/NMASpaceOS/NMAexhibition_file_collection/whowillseethesun.app",
+      "type": "UNITY"
+    },
+    {
+      "path": "/Users/yangwang/code/processing/NMASpaceOS/NMAexhibition_file_collection/jordan/jordan.pde",
+      "type": "PROCESSING"
+    },
+    {
+      "path": "/Users/yangwang/code/processing/NMASpaceOS/NMAexhibition_file_collection/steph/steph.pde",
+      "type": "PROCESSING"
+    }
+  ],
+  "interval": 1
+}

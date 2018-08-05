@@ -2,12 +2,11 @@ import controlP5.*;
 import java.awt.Robot;
 import javax.swing.JFileChooser;
 
-//SETTINGS
-////////////////////////
-int n = 3;//number of items
-int interval = 15; //default value is 1 second
-boolean AUTO_RUN = true;
-////////////////////////
+/////////////////////////// SETTINGS, CHANGE AS YOU NEEDED /////////////
+int n = 3;//number of projects that needs to be scheduled by this app
+int interval = 15; //how long does each project run [seconds]
+boolean AUTO_RUN = true; //if run the projects automatically when this application starts
+////////////////////////////////////////////////////////////////////////
 
 
 
@@ -28,7 +27,7 @@ TypeListener chooseTypeListener;
 Toggle runToggle;
 boolean justStarted;
 Slider intervalSlider;
-color bgColor;
+color bgColor = color(0, 0, 0);
 color runningBGColor = color(19, 103, 0);
 color defaultBGColor = color(10);
 
@@ -112,7 +111,7 @@ void setup() {
 
   runToggle = cp5.addToggle("toggleRun")
     .setPosition(gPadding, (inputFieldH+padding) * (n+1) + gPadding)
-    .setValue(AUTO_RUN)
+    .setValue(false)
     .setSize(runToggleHeight, runToggleHeight);
 
   saveSettings = cp5.addButton("saveSettings")
@@ -134,10 +133,10 @@ void setup() {
   timer = new Timer(interval*1000);//define a timer for 1 to 10 seconds long
   index = 0;
 
-  if (AUTO_RUN) {
-    loadSettings();
-    toggleRun(true);
-  }
+  loadSettings();
+
+
+  runToggle.setValue(AUTO_RUN);
 }
 
 
@@ -145,12 +144,12 @@ void draw() {
   //println(timer.totalTime);
   background(0);
   if (running) {
-    Run();
-    DrawRunningIndicator();
+    run();
+    drawRunningIndicator();
   }
 }
 
-void DrawRunningIndicator() {
+void drawRunningIndicator() {
   noStroke();
   fill(60, 255, 0);
   ellipse(width - gPadding, gPadding, 10, 10);
@@ -170,7 +169,7 @@ void execute(String path, boolean isProcessing) {
   }
 }
 
-void Run() {
+void run() {
 
   String noTypeSetErrorMsg = ":    type hasn't been set.";
   String noPathErrorMsg = ":    file path isn't set.";
@@ -230,29 +229,36 @@ void Run() {
       }
     }
 
-    delay(1000);
-
     //progress index
     if (index < n - 1) {
       index++;
     } else {
       index = 0;
     }
-
     timer.updateSavedTime();
   }
 }
 
-void toggleRun(boolean value) {
+void turnOn() {
   index = 0;
+  timer.savedTime = millis();
+  running = true;
+  bgColor = runningBGColor;
+  justStarted = true;
+}
+
+void turnOff() {
+  index = 0;
+  running = false;
+  bgColor = defaultBGColor;
+}
+
+//button action
+void toggleRun(boolean value) {
   if (value) {
-    timer.savedTime = millis();
-    running = true;
-    bgColor = runningBGColor;
-    justStarted = true;
+    turnOn();
   } else {
-    running = false;
-    bgColor = defaultBGColor;
+    turnOff();
   }
 }
 

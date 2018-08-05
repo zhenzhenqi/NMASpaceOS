@@ -13,6 +13,10 @@ void loadSettings() {
   JSONArray executables = userpref.getJSONArray("executables");
 
   if (executables != null) {
+    if (executables.size()!=n) {
+      log2console("Number of projects in saved settings doesn't match the current number of projects, loading aborting...");
+      return;
+    }
     for (int i=0; i<executables.size(); i++) {
       JSONObject executable = (JSONObject)executables.get(i);
 
