@@ -4,7 +4,7 @@ import javax.swing.JFileChooser;
 
 /////////////////////////// SETTINGS, CHANGE AS YOU NEEDED /////////////
 int n = 3;//number of projects that needs to be scheduled by this app
-int interval = 15; //how long does each project run [seconds]
+int intervalValue = 40; //how long does each project run [seconds]
 boolean AUTO_RUN = true; //if run the projects automatically when this application starts
 ////////////////////////////////////////////////////////////////////////
 
@@ -18,19 +18,19 @@ ArrayList<Textarea> filePathTextAreas;
 ArrayList<Button> chooseFileButtons;
 ArrayList<RadioButton> fileTypeButtons;
 ArrayList<Type> allTypes;
-
 Button saveSettings;
-
-
 ButtonListener choosePathListener;
 TypeListener chooseTypeListener;
 Toggle runToggle;
 boolean justStarted;
 Slider intervalSlider;
+
+//colors
 color bgColor = color(0, 0, 0);
 color runningBGColor = color(19, 103, 0);
 color defaultBGColor = color(10);
 
+//items
 Executable[] exes = new Executable[n];
 
 //String[] filePaths = new String[n];
@@ -104,8 +104,8 @@ void setup() {
 
   intervalSlider = cp5.addSlider("interval")
     .setPosition(gPadding, (inputFieldH+padding) * n + gPadding)
-    .setValue(interval)
-    .setRange(3, 180)
+    .setRange(1, 180)
+    .setValue(intervalValue)
     .setLabel("(second)")
     .setSize(200, padding);
 
@@ -130,12 +130,12 @@ void setup() {
     .setPosition(gPadding, height-consoleHeight-gPadding);
 
 
-  timer = new Timer(interval*1000);//define a timer for 1 to 10 seconds long
+  timer = new Timer(intervalValue*1000);//define a timer for 1 to 10 seconds long
   index = 0;
 
   loadSettings();
 
-
+  intervalSlider.setValue(intervalValue);
   runToggle.setValue(AUTO_RUN);
 }
 
@@ -294,6 +294,7 @@ void controlEvent(ControlEvent theEvent) {
 void interval (int input) {
   if (timer!=null) {
     timer.updateTotalTime(input * 1000);
+    intervalValue = input;
     println("interval is set to: " + input  + " sec");
   }
 }

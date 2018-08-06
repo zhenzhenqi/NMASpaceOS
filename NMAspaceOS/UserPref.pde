@@ -59,21 +59,17 @@ void loadSettings() {
     _interval = userpref.getInt("interval");
     if (_interval != -1) {
       println("interval loaded.");
-      interval = _interval;
-      intervalSlider.setValue(interval);
+      intervalValue = _interval;
+      intervalSlider.setValue(intervalValue);
     }
   }
   catch(Exception e) {
     log2console(e+"\n");
   }
-
-
-
-
-
-  //if (userpref.getInt("interval") != null) {
-  //  interval = userpref.getInt("interval");
-  //}
+  if (userpref.hasKey("interval")) {
+    println("interval value: "+userpref.getInt("interval"));
+    intervalValue = userpref.getInt("interval");
+  }
 }
 
 
@@ -96,7 +92,7 @@ void saveSettings() {
   userpref.setJSONArray("executables", executables);
 
   //save interval
-  userpref.setInt("interval", interval);
+  userpref.setInt("interval", intervalValue);
 
   //save all to json file
   saveJSONObject(userpref, dataFileName);
