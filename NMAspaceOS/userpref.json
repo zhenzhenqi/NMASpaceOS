@@ -1,17 +1,17 @@
-{
-  "executables": [
-    {
-      "path": "/Users/yangwang/code/processing/NMASpaceOS/NMAexhibition_file_collection/whowillseethesun.app",
-      "type": "UNITY"
-    },
-    {
-      "path": "/Users/yangwang/code/processing/NMASpaceOS/NMAexhibition_file_collection/jordan/jordan.pde",
-      "type": "PROCESSING"
-    },
-    {
-      "path": "/Users/yangwang/code/processing/NMASpaceOS/NMAexhibition_file_collection/steph/steph.pde",
-      "type": "PROCESSING"
-    }
-  ],
-  "interval": 53
-}
+{"executables": [
+  {
+    "path": "/Users/yangwang/code/processing/NMASpaceOS/NMAexhibition_file_collection/whowillseethesun.app",
+    "runningTime": "25.925",
+    "type": "UNITY"
+  },
+  {
+    "path": "/Users/yangwang/code/processing/NMASpaceOS/NMAexhibition_file_collection/jordan/jordan.pde",
+    "runningTime": "16.125",
+    "type": "PROCESSING"
+  },
+  {
+    "path": "/Users/yangwang/code/processing/NMASpaceOS/NMAexhibition_file_collection/steph/steph.pde",
+    "runningTime": "60.225",
+    "type": "PROCESSING"
+  }
+]}

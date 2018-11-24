@@ -5,7 +5,8 @@ import javax.swing.JFileChooser;
 /////////////////////////// SETTINGS, CHANGE AS YOU NEEDED /////////////
 int n = 3;//number of projects that needs to be scheduled by this app
 int intervalValue = 40; //how long does each project run [seconds]
-boolean AUTO_RUN = true; //if run the projects automatically when this application starts
+boolean AUTO_RUN = false; //if run the projects automatically when this application starts
+int defaultRunningTime = 40; //how long does each project run [seconds]
 ////////////////////////////////////////////////////////////////////////
 
 
@@ -17,13 +18,14 @@ ControlP5 cp5;
 ArrayList<Textarea> filePathTextAreas;
 ArrayList<Button> chooseFileButtons;
 ArrayList<RadioButton> fileTypeButtons;
+ArrayList<Slider> runningTimeSliders;
 ArrayList<Type> allTypes;
 Button saveSettings;
 ButtonListener choosePathListener;
 TypeListener chooseTypeListener;
 Toggle runToggle;
 boolean justStarted;
-Slider intervalSlider;
+//Slider intervalSlider;
 
 //colors
 color bgColor = color(0, 0, 0);
@@ -60,14 +62,17 @@ public enum Type {
 JSONObject userpref;
 String dataFileName = "userpref.json";
 
-void setup() {
-  size(900, 600);
+void settings() {
   pixelDensity(2);
-  cp5 = new ControlP5(this);
+  size(900, 600);
+}
 
+void setup() {
+  cp5 = new ControlP5(this);
   filePathTextAreas = new ArrayList<Textarea>();
   chooseFileButtons = new ArrayList<Button>();
   fileTypeButtons = new ArrayList<RadioButton>();
+  runningTimeSliders = new ArrayList<Slider>();
 
   choosePathListener = new ButtonListener();
   chooseTypeListener = new TypeListener();
@@ -100,14 +105,22 @@ void setup() {
       rb.addItem(Type.values()[i2] + "_" + i, i2);
     }
     fileTypeButtons.add(rb);
+    //sliders
+    Slider slider = cp5.addSlider("runningTime"+i);
+    slider.setValue(defaultRunningTime);
+    slider.setSize(inputFieldW, padding);
+    slider.setRange(10, 500);
+    //slider.addListener(runningTimeChange);
+    slider.setPosition(gPadding, (inputFieldH + padding) * i + gPadding + inputFieldH );
+    runningTimeSliders.add(slider);
   }
 
-  intervalSlider = cp5.addSlider("interval")
-    .setPosition(gPadding, (inputFieldH+padding) * n + gPadding)
-    .setRange(1, 180)
-    .setValue(intervalValue)
-    .setLabel("(second)")
-    .setSize(200, padding);
+  //intervalSlider = cp5.addSlider("interval")
+  //  .setPosition(gPadding, (inputFieldH+padding) * n + gPadding)
+  //  .setRange(1, 180)
+  //  .setValue(intervalValue)
+  //  .setLabel("(second)")
+  //  .setSize(200, padding);
 
   runToggle = cp5.addToggle("toggleRun")
     .setPosition(gPadding, (inputFieldH+padding) * (n+1) + gPadding)
@@ -130,22 +143,22 @@ void setup() {
     .setPosition(gPadding, height-consoleHeight-gPadding);
 
 
-  timer = new Timer(intervalValue*1000);//define a timer for 1 to 10 seconds long
+  timer = new Timer(5000);//define a timer for 1 to 10 seconds long
   index = 0;
 
   loadSettings();
 
-  intervalSlider.setValue(intervalValue);
+  //intervalSlider.setValue(intervalValue);
   runToggle.setValue(AUTO_RUN);
 }
 
 
 void draw() {
-  //println(timer.totalTime);
-  background(0);
+  background(bgColor);
   if (running) {
     run();
     drawRunningIndicator();
+    drawLeftTime();
   }
 }
 
@@ -153,6 +166,11 @@ void drawRunningIndicator() {
   noStroke();
   fill(60, 255, 0);
   ellipse(width - gPadding, gPadding, 10, 10);
+}
+
+void drawLeftTime() {
+  textAlign(RIGHT, RIGHT);
+  text("Seconds left: " + timer.getTimeLeft(), width-gPadding, gPadding+30);
 }
 
 void execute(String path, boolean isProcessing) {
@@ -229,19 +247,20 @@ void run() {
       }
     }
 
+    timer.updateTotalTime(getInterval(index));
+
     //progress index
     if (index < n - 1) {
       index++;
     } else {
       index = 0;
     }
-    timer.updateSavedTime();
   }
 }
 
 void turnOn() {
   index = 0;
-  timer.savedTime = millis();
+  timer.updateSavedTime();
   running = true;
   bgColor = runningBGColor;
   justStarted = true;
@@ -251,6 +270,12 @@ void turnOff() {
   index = 0;
   running = false;
   bgColor = defaultBGColor;
+}
+
+int getInterval(int index) {
+  int intervalThisSession = (int)(runningTimeSliders.get(index).getValue() * 1000);
+  println("interval this session: " + intervalThisSession);
+  return intervalThisSession;
 }
 
 //button action
@@ -283,6 +308,13 @@ void controlEvent(ControlEvent theEvent) {
     exes[groupID].TYPE =  Type.values()[ (int)theEvent.getGroup().getValue() ];
   }
 
+  //for (int i=0; i<runningTimeSliders.size(); i++) {
+  //  if (theEvent.getController()==runningTimeSliders.get(i)) {
+
+  //  }
+  //}
+
+
   //if (intervalSlider != null) {
   //  if (theEvent.getController().getName() == intervalSlider.getName()) {
   //    timer.updateTotalTime(interval * 1000);
@@ -292,11 +324,11 @@ void controlEvent(ControlEvent theEvent) {
 }
 
 void interval (int input) {
-  if (timer!=null) {
-    timer.updateTotalTime(input * 1000);
-    intervalValue = input;
-    println("interval is set to: " + input  + " sec");
-  }
+  //if (timer!=null) {
+  //  timer.updateTotalTime(input * 1000);
+  //  intervalValue = input;
+  //  println("interval is set to: " + input  + " sec");
+  //}
 }
 
 

@@ -19,7 +19,7 @@ void loadSettings() {
     }
     for (int i=0; i<executables.size(); i++) {
       JSONObject executable = (JSONObject)executables.get(i);
-
+      //file path
       String filepath = executable.getString("path");
       Textarea ta = filePathTextAreas.get(i);
 
@@ -31,6 +31,7 @@ void loadSettings() {
         println("["+i+"] filepath is null");
       }
 
+      //file type
       String filetype = executable.getString("type");
       if (filetype != "" && filetype.length() > 1) {
         println("["+i+"]  Loading types: " + filetype);
@@ -47,6 +48,14 @@ void loadSettings() {
       } else {
         println("["+i+"]:  type invalid");
       }
+
+
+      //running time
+      float runningTime = defaultRunningTime;
+      if (executable.getString("runningTime")!=null)  runningTime = Float.parseFloat( executable.getString("runningTime") );
+      runningTimeSliders.get(i).setValue(runningTime);
+
+
       println("----------------------------");
     }
   } else {
@@ -54,22 +63,22 @@ void loadSettings() {
   }
 
   //interval
-  int _interval = -1;
-  try {
-    _interval = userpref.getInt("interval");
-    if (_interval != -1) {
-      println("interval loaded.");
-      intervalValue = _interval;
-      intervalSlider.setValue(intervalValue);
-    }
-  }
-  catch(Exception e) {
-    log2console(e+"\n");
-  }
-  if (userpref.hasKey("interval")) {
-    println("interval value: "+userpref.getInt("interval"));
-    intervalValue = userpref.getInt("interval");
-  }
+  //int _interval = -1;
+  //try {
+  //  _interval = userpref.getInt("interval");
+  //  if (_interval != -1) {
+  //    println("interval loaded.");
+  //    intervalValue = _interval;
+  //    intervalSlider.setValue(intervalValue);
+  //  }
+  //}
+  //catch(Exception e) {
+  //  log2console(e+"\n");
+  //}
+  //if (userpref.hasKey("interval")) {
+  //  println("interval value: "+userpref.getInt("interval"));
+  //  intervalValue = userpref.getInt("interval");
+  //}
 }
 
 
@@ -86,13 +95,14 @@ void saveSettings() {
     } else {
       executable.setString("type", "");
     }
+    executable.setString("runningTime", runningTimeSliders.get(i).getValue()+"");
     //save [executable] to [executables]
     executables.setJSONObject(i, executable);
   }
   userpref.setJSONArray("executables", executables);
 
   //save interval
-  userpref.setInt("interval", intervalValue);
+  //userpref.setInt("interval", intervalValue);
 
   //save all to json file
   saveJSONObject(userpref, dataFileName);
